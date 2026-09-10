@@ -3,7 +3,7 @@ BUDDY RUN COACH
 What it does
 - Shows the full 29-week Irving Half Marathon plan
 - Calculates the current training week and race countdown
-- Lets you manually log distance, time, heart rate, RPE, and notes
+- Lets you manually log distance, duration (hours/minutes/seconds), heart rate, RPE, and notes
 - Automatically calculates pace
 - Tracks weekly mileage, total mileage, completion %, longest run, average pace, average HR, and total time
 - Shows a weekly mileage chart and personal bests
@@ -24,3 +24,7 @@ This is a Progressive Web App (PWA). For full install/offline behavior it needs 
 For a quick desktop preview, run a local web server from this folder, for example:
 python -m http.server 8000
 Then open http://localhost:8000
+
+
+UPDATE v2
+- Duration entry now uses separate Hours, Minutes, and Seconds number fields for easier iPhone entry.

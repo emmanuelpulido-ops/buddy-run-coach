@@ -67,11 +67,12 @@ function loadState(){
   catch { return {runs:[]}; }
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
-function parseDuration(text){
-  if(!text) return 0; const parts=text.trim().split(':').map(Number); if(parts.some(Number.isNaN)) return 0;
-  if(parts.length===2) return parts[0]*60+parts[1];
-  if(parts.length===3) return parts[0]*3600+parts[1]*60+parts[2];
-  return 0;
+function getDurationSeconds(){
+  const h=Number(document.getElementById('durationHours').value)||0;
+  const m=Number(document.getElementById('durationMinutes').value)||0;
+  const s=Number(document.getElementById('durationSeconds').value)||0;
+  if(h<0 || m<0 || m>59 || s<0 || s>59) return 0;
+  return h*3600+m*60+s;
 }
 function fmtDuration(sec){ const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=Math.round(sec%60); return h?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`; }
 function fmtPace(secPerMi){ if(!isFinite(secPerMi)||secPerMi<=0)return '—'; const m=Math.floor(secPerMi/60),s=Math.round(secPerMi%60); return `${m}:${String(s).padStart(2,'0')}/mi`; }
@@ -161,11 +162,11 @@ function navigate(id){ document.querySelectorAll('.screen').forEach(s=>s.classLi
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
 fillWorkoutSelect();
 document.getElementById('runDate').value=isoDate(new Date());
-['distance','duration'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{ const d=Number(document.getElementById('distance').value), s=parseDuration(document.getElementById('duration').value); document.getElementById('pacePreview').textContent=d&&s?fmtPace(s/d):'—'; }));
+['distance','durationHours','durationMinutes','durationSeconds'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{ const d=Number(document.getElementById('distance').value), s=getDurationSeconds(); document.getElementById('pacePreview').textContent=d&&s?fmtPace(s/d):'—'; }));
 document.getElementById('runDate').addEventListener('change',e=>{ const wo=workoutForDate(e.target.value); document.getElementById('plannedWorkout').value=wo?wo.key:''; });
 document.getElementById('plannedWorkout').addEventListener('change',e=>{ const wo=allWorkouts().find(w=>w.key===e.target.value); if(wo) document.getElementById('runDate').value=wo.date; });
 document.getElementById('runForm').addEventListener('submit',e=>{
-  e.preventDefault(); const distance=Number(document.getElementById('distance').value), durationSec=parseDuration(document.getElementById('duration').value); if(!distance||!durationSec){toast('Enter a valid distance and time');return;}
+  e.preventDefault(); const distance=Number(document.getElementById('distance').value), durationSec=getDurationSeconds(); if(!distance||!durationSec){toast('Enter a valid distance and duration');return;}
   const key=document.getElementById('plannedWorkout').value;
   state.runs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),createdAt:Date.now(),date:document.getElementById('runDate').value,workoutKey:key||null,distance,durationSec,heartRate:Number(document.getElementById('heartRate').value)||null,rpe:Number(document.getElementById('rpe').value)||null,notes:document.getElementById('notes').value.trim(),completed:document.getElementById('completed').checked});
   saveState(); e.target.reset(); document.getElementById('runDate').value=isoDate(new Date()); document.getElementById('completed').checked=true; document.getElementById('pacePreview').textContent='—'; fillWorkoutSelect(); renderAll(); toast('Run saved'); navigate('home');
