@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Buddy Run Coach" />
+  <title>Buddy Run Coach</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">IRVING HALF MARATHON • 2027</p>
+      <h1>Buddy Run Coach</h1>
+    </div>
+    <button id="installBtn" class="ghost hidden">Install</button>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero card">
+        <div>
+          <p class="muted">Race countdown</p>
+          <div id="countdown" class="countdown">—</div>
+          <p class="muted">until March 21, 2027</p>
+        </div>
+        <div class="week-badge">
+          <span>Training week</span>
+          <strong id="currentWeek">—</strong>
+        </div>
+      </div>
+
+      <section class="card today-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">TODAY</p>
+            <h2 id="todayTitle">Loading…</h2>
+          </div>
+          <span id="todayStatus" class="pill">—</span>
+        </div>
+        <p id="todayDetail" class="workout-detail"></p>
+        <button id="logTodayBtn" class="primary">Log this run</button>
+      </section>
+
+      <div class="stats-grid">
+        <article class="stat card"><span>This week</span><strong id="weekMiles">0.0 mi</strong><small id="weekGoal">of 0 mi planned</small></article>
+        <article class="stat card"><span>Total miles</span><strong id="totalMiles">0.0</strong><small>logged in this plan</small></article>
+        <article class="stat card"><span>Completion</span><strong id="completionPct">0%</strong><small>scheduled runs completed</small></article>
+        <article class="stat card"><span>Longest run</span><strong id="longestRun">0.0 mi</strong><small>best so far</small></article>
+      </div>
+
+      <section class="card">
+        <div class="section-heading"><h2>Upcoming</h2><button class="text-btn" data-nav="plan">View plan</button></div>
+        <div id="upcomingList" class="upcoming-list"></div>
+      </section>
+    </section>
+
+    <section id="plan" class="screen">
+      <div class="section-heading sticky-heading">
+        <div><p class="eyebrow">29-WEEK PROGRAM</p><h2>Training Plan</h2></div>
+        <span class="pill">3 runs/week</span>
+      </div>
+      <div class="legend card">
+        <b>E</b> Easy · <b>T</b> Tempo · <b>TH</b> Threshold · <b>HM</b> Half-marathon effort · <b>LR</b> Long run
+      </div>
+      <div id="planList" class="plan-list"></div>
+    </section>
+
+    <section id="log" class="screen">
+      <div class="section-heading"><div><p class="eyebrow">MANUAL ENTRY</p><h2>Log a Run</h2></div></div>
+      <form id="runForm" class="card form-card">
+        <label>Date<input id="runDate" type="date" required></label>
+        <label>Planned workout<select id="plannedWorkout"></select></label>
+        <div class="two-col">
+          <label>Distance (mi)<input id="distance" type="number" min="0" step="0.01" inputmode="decimal" required></label>
+          <label>Duration<input id="duration" type="text" inputmode="numeric" placeholder="hh:mm:ss or mm:ss" required></label>
+        </div>
+        <div class="two-col">
+          <label>Avg. heart rate<input id="heartRate" type="number" min="0" step="1" inputmode="numeric" placeholder="optional"></label>
+          <label>RPE (1–10)<input id="rpe" type="number" min="1" max="10" step="1" inputmode="numeric" placeholder="optional"></label>
+        </div>
+        <div class="computed"><span>Calculated pace</span><strong id="pacePreview">—</strong></div>
+        <label>Notes<textarea id="notes" rows="4" placeholder="How did the run feel?"></textarea></label>
+        <label class="check-row"><input id="completed" type="checkbox" checked><span>Mark planned workout complete</span></label>
+        <button class="primary" type="submit">Save run</button>
+      </form>
+
+      <section class="card">
+        <div class="section-heading"><h2>Recent Runs</h2><button id="exportBtn" class="text-btn">Export backup</button></div>
+        <div id="recentRuns" class="recent-runs"></div>
+        <div class="backup-row">
+          <label class="file-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
+          <button id="clearDataBtn" class="danger-btn" type="button">Clear all data</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="progress" class="screen">
+      <div class="section-heading"><div><p class="eyebrow">YOUR STATS</p><h2>Progress</h2></div></div>
+      <div class="stats-grid">
+        <article class="stat card"><span>Avg. pace</span><strong id="avgPace">—</strong><small>all logged runs</small></article>
+        <article class="stat card"><span>Total time</span><strong id="totalTime">0h 0m</strong><small>running time</small></article>
+        <article class="stat card"><span>Runs logged</span><strong id="runsLogged">0</strong><small>training sessions</small></article>
+        <article class="stat card"><span>Avg. HR</span><strong id="avgHR">—</strong><small>runs with HR entered</small></article>
+      </div>
+      <section class="card chart-card">
+        <div class="section-heading"><h2>Weekly Mileage</h2></div>
+        <canvas id="mileageChart" width="700" height="330"></canvas>
+      </section>
+      <section class="card">
+        <div class="section-heading"><h2>Personal Bests</h2></div>
+        <div id="personalBests" class="pbs"></div>
+      </section>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button data-nav="home" class="active"><span>⌂</span>Today</button>
+    <button data-nav="plan"><span>▦</span>Plan</button>
+    <button data-nav="log"><span>＋</span>Log</button>
+    <button data-nav="progress"><span>↗</span>Progress</button>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
